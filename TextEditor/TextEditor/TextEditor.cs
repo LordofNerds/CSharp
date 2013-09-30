@@ -17,6 +17,19 @@ namespace TextEditor
             InitializeComponent();
         }
         #region Editor & General
+        private void TextEditor_Load(object sender, EventArgs e)
+        {
+            FontSize();
+            InstalledFonts();
+        }
+
+        private void Timer_Tick_1(object sender, EventArgs e)
+        {
+            charCount.Text = "Characters in the current document: " + Document.TextLength.ToString();
+            //status_ZoomFactor.Text = Document.ZoomFactor.ToString();
+        }
+
+
         #endregion
 
         #region MainMenu
@@ -44,7 +57,7 @@ namespace TextEditor
         {
             if (openWork.ShowDialog() == DialogResult.OK)
             {
-                HtmlDocument.LoadFile(openWork.FileName, RichTextBoxStreamType.PlainText);
+                Document.LoadFile(openWork.FileName, RichTextBoxStreamType.PlainText);
             }
         }
 
@@ -274,7 +287,7 @@ namespace TextEditor
 
         private void tb_ZoomIn_Click(object sender, EventArgs e)
         {
-            if (Doument.ZoomFactor == 63)
+            if (Document.ZoomFactor == 63)
             {
                 return;
             }
@@ -286,7 +299,7 @@ namespace TextEditor
 
         private void tb_ZoomOut_Click(object sender, EventArgs e)
         {
-            if (Doument.ZoomFactor == 1)
+            if (Document.ZoomFactor == 1)
             {
                 return;
             }
@@ -334,6 +347,130 @@ namespace TextEditor
                 Document.SelectionFont = Ifont;
             }
         }
+
+        private void tb_UnderLine_Click(object sender, EventArgs e)
+        {
+            Font Ufont = new Font(Document.Font, FontStyle.Underline);
+            Font rfont = new Font(Document.Font, FontStyle.Regular);
+
+            if (Document.SelectedText.Length == 0)
+            {
+                return;
+            }
+
+            if(Document.SelectionFont.Underline)
+            {
+                Document.SelectionFont = rfont;
+            }
+            else
+            {
+                Document.SelectionFont = Ufont;
+            }
+        }
+
+        private void tb_Strike_Click(object sender, EventArgs e)
+        {
+            Font Sfont = new Font(Document.Font, FontStyle.Strikeout);
+            Font rfont = new Font(Document.Font, FontStyle.Regular);
+            if (Document.SelectedText.Length == 0)
+                return;
+            if (Document.SelectionFont.Strikeout)
+            {
+                Document.SelectionFont = rfont;
+            }
+            else
+            {
+                Document.SelectionFont = Sfont;
+            }
+        }
+
+        private void tb_LeftAlign_Click(object sender, EventArgs e)
+        {
+            Document.SelectionAlignment = HorizontalAlignment.Left;
+        }
+
+        private void tb_CenterAlign_Click(object sender, EventArgs e)
+        {
+            Document.SelectionAlignment = HorizontalAlignment.Center;
+        }
+
+        private void tb_RightAlign_Click(object sender, EventArgs e)
+        {
+            Document.SelectionAlignment = HorizontalAlignment.Right;
+        }
+
+        private void tb_TextUp_Click(object sender, EventArgs e)
+        {
+            Document.SelectedText = Document.SelectedText.ToUpper();
+        }
+
+        private void tb_TextDown_Click(object sender, EventArgs e)
+        {
+            Document.SelectedText = Document.SelectedText.ToLower();
+        }
+
+        private void tb_Font_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+
+
+        void FontSize()
+        {
+            for (int fntSize = 10; fntSize <= 75; fntSize++)
+            {
+                tb_FontSize.Items.Add(fntSize.ToString());
+            }
+        }
+        void InstalledFonts()
+        {
+            //Makes a collection of all insalled windoes fonts
+            InstalledFontCollection fonts = new InstalledFontCollection();
+            for (int i = 0; i < fonts.Families.Length; i++)
+            {
+                tb_Font.Items.Add(fonts.Families[i].Name);
+            }
+        }
+
+        private void tb_Font_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            //For the text that has been selected -> change the font when the selection in the menu changes
+            System.Drawing.Font ComboFonts = null;
+            try
+            {
+                ComboFonts = Document.SelectionFont;
+                Document.SelectionFont = new System.Drawing.Font(tb_Font.Text,
+                Document.SelectionFont.Size, Document.SelectionFont.Style);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void tb_FontSize_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Document.SelectionFont = new Font(tb_FontSize.SelectedItem.ToString(),
+            int.Parse(tb_FontSize.SelectedItem.ToString()), Document.SelectionFont.Style);
+        }
+
+        private void tb_Italic_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tb_Italic_LinkClicked(object sender, LinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(e.LinkText);
+        }
+
+        private void toolStripStatusLabel1_Click(object sender, EventArgs e)
+        {
+
+        }
+
 
         
 
